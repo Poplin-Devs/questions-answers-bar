@@ -10,10 +10,11 @@ while read id answer_id url
 do
   if [[ -n id && -n answer_id && -n url ]];
   then
+    echo "writing $id..."
     echo "$id, $answer_id, $url" >> $OUTPUT
-    mongo --eval "db.photos.insertOne({id: "$id" , answer_id: "$answer_id", url: "$url"})"
   else
     echo "Invalid entry: $id , $answer_id, $url " >> $LOG
   fi
 done < $INPUT
+echo "done!"
 IFS=$OLDIFS

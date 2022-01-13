@@ -24,7 +24,7 @@ do
   [[ -n answerer_name && -n answerer_email && -n reported ]] &&
   [[ BODYLENGTH -lt 1000 && NAMELENGTH -lt 60 && EMAILLENGTH -lt 60 ]]
   then
-  #Probably should have a INSERT query here
+    echo "writing... $id"
     echo "$id, $question_id, $body, $date, $answerer_name, $answerer_email, $reported, $helpful" >> $OUTPUT
   else
     echo "Invalid entry: $id, $question_id, $body, $date, $answerer_name, $answerer_email, $reported, $helpful" >> $LOG
@@ -32,3 +32,5 @@ do
 
 done < $INPUT
 IFS=$OLDIFS
+
+echo "done!"
