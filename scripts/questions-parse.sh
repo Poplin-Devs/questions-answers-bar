@@ -24,10 +24,12 @@ do
   [[ -n date_written && -n asker_name && -n asker_email ]] &&
   [[ BODYLENGTH -lt 1000 && NAMELENGTH -lt 60 && EMAILLENGTH -lt 60 ]]
   then
+    echo "writing... $id"
     echo "$id, $product_id, $body, $date_written, $asker_name, $asker_email, $reported, $helpful" >> $OUTPUT
   else
     echo "\n\n\n Invalid entry: $id, $product_id, $body, $date, $asker_name, $asker_email, $reported, $helpful \n\n\n" >> $LOG
   fi
-
 done < $INPUT
 IFS=$OLDIFS
+
+echo "done!"
