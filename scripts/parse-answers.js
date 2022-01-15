@@ -37,12 +37,12 @@ async function readEveryLine() {
       console.log('Valid name: ', answererName, validateName(answererName))
       console.log('Valid email: ', answererEmail, validateEmail(answererEmail))
       console.log('valid reported: ', reported, validateReported(reported))
-      count++
     }
 
     if (count === 50) {
       rl.close();
     }
+    count++
   }
 }
 
