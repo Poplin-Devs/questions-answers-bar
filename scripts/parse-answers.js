@@ -9,11 +9,8 @@ const {
   validateName
 } = require('./fieldCheckers.js');
 
-let count = 0;
-
-
 async function readEveryLine() {
-
+  let count = 0;
   const rl = readline.createInterface({
     input: fs.createReadStream('../data/answers.csv'),
     crlfDelay: Infinity
@@ -34,6 +31,12 @@ async function readEveryLine() {
     ] = splitLine;
     console.log(line)
     if (count > 1) {
+      console.log('Valid answer Id: ', answerId, validateId(answerId))
+      console.log('Valid question Id: ', questionId, validateId(questionId))
+      console.log('Valid body: ', answerBody, validateBody(answerBody))
+      console.log('Valid name: ', answererName, validateName(answererName))
+      console.log('Valid email: ', answererEmail, validateEmail(answererEmail))
+      console.log('valid reported: ', reported, validateReported(reported))
       count++
     }
 
