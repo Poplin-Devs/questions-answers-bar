@@ -13,3 +13,7 @@
 - PAGE Will tell you how many pages you want
 - COUNT will tell us how many answers per page
 
+## /etl
+Contains several small programs to extract, validate, and seed csv into our database.
+
+## /extractors
