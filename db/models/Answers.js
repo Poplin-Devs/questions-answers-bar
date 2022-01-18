@@ -13,6 +13,4 @@ const answerSchema = new Schema({
   answer_helpfulness: { type: Number }
 })
 
-const Answer = mongoose.model('Answer', answerSchema)
-
-module.exports = Answer;
+module.exports = mongoose.model('Answer', answerSchema)

@@ -85,7 +85,6 @@ const validateAnswer = (entry) => {
     if (test) {
       return true;
     } else {
-      console.log('\n\n\n\ Test failed! \n\n\n\n')
       return false;
     }
   })

@@ -2,7 +2,6 @@
 const express = require('express');
 const db = require('../db');
 const bodyParser = require('body-parser');
-const { getAnswers, addAnswer } = require('./controllers/answers.js')
 
 app = express();
 app.use(bodyParser.json());

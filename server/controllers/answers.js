@@ -1,4 +1,4 @@
-const Answer = require('../../db/models/Answers.js')
+const Answer = require('../../db/models/Answers')
 
 async function getAnswers() {
   console.log('Get answers was called!')
