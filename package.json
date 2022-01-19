@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.2",
     "line-by-line": "^0.1.6",
     "mongodb": "^4.3.0",
@@ -10,7 +11,7 @@
   "version": "1.0.0",
   "main": "answerChecks.js",
   "scripts": {
-    "serve": "nodemon ../server/index.js"
+    "serve": "nodemon server/index.js"
   },
   "repository": {
     "type": "git",

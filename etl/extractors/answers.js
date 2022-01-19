@@ -23,14 +23,14 @@ lr.on('line', (line) => {
     answerHelpful
   ] = splitLine;
   const newEntry = {
-    _id: answerId,
-    question_id: questionId,
+    answer_id: Number(answerId),
+    question_id: Number(questionId),
     body: answerBody,
-    created_at: answerDate,
+    date: answerDate,
     answerer_name: answererName,
     answerer_email: answererEmail,
     reported: reported === 1 ? true : false,
-    answer_helpfulness: Number(answerHelpful)
+    helpfulness: Number(answerHelpful)
   }
 
   if (validateAnswer(newEntry)) {
@@ -48,7 +48,7 @@ lr.on('line', (line) => {
         buffer = [];
         setTimeout(()=> {
           lr.resume();
-        }, 5000)
+        }, 60000)
       })
       .catch((err) => {
         errors += 1;

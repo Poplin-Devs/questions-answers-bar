@@ -1,9 +1,15 @@
-const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
+const client = new MongoClient('mongodb://localhost:27017');
+const import
+const db = client.db('sdc');
 
-const db = mongoose.connect('mongodb://localhost:27017/sdc');
+async getQuestions(page=1, count=5) {
+  await client.connect();
 
-db
-.then(db => console.log('Connected to mongo!'))
-.catch(err => console.error('Error! ', err))
+  console.log('Connected successfully to server');
+  const collection = db.collection('questions');
+};
 
-module.exports = db;
+module.exports = {
+  getQuestions
+};

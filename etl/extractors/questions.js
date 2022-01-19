@@ -14,10 +14,10 @@ lr.on('line', (line) => {
 
   const splitLine = line.split(',');
   const [
-    question_id,
+    id,
     product_id,
     question_body,
-    created_at,
+    question_date,
     asker_name,
     asker_email,
     reported,
@@ -25,10 +25,10 @@ lr.on('line', (line) => {
   ] = splitLine;
 
   const newQuestion = {
-    _id: question_id,
-    product_id,
+    id: Number(id),
+    product_id: Number(product_id),
     question_body,
-    created_at,
+    question_date,
     asker_name,
     asker_email,
     reported: reported === 1 ? true : false,
@@ -38,9 +38,9 @@ lr.on('line', (line) => {
   if (validateQuestion(newQuestion)) {
     buffer.push(newQuestion)
   } else {
-    lr.pause();
-    console.log('Bad entry! :', newQuestion)
+    console.log('Bad Entry! ', newQuestion)
   }
+  //TODO: Put bad entries into
 
   if (buffer.length === 1000000) {
     count += buffer.length;
@@ -50,7 +50,7 @@ lr.on('line', (line) => {
         buffer = [];
         setTimeout(() => {
           lr.resume();
-        }, 5000)
+        }, 10000)
       })
       .catch((err) => {
         errors += 1;

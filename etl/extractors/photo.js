@@ -13,7 +13,7 @@ lr.on('line', (line) => {
   lr.pause();
   const splitLine = line.split(',');
   const [_id, answer_id, url] = splitLine;
-  const newEntry = { _id, answer_id, url }
+  const newEntry = { _id: Number(_id), answer_id: Number(answer_id), url }
 
   if (validatePhoto(newEntry)) {
     buffer.push(newEntry)

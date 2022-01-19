@@ -1,8 +1,10 @@
 
 const validateId = (id) => {
-  id = Number(id)
-  if (typeof id == 'number') return true;
-  return false;
+  if (typeof id == 'number') {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 const validateBody = (body) => {
@@ -42,18 +44,16 @@ const validateNumber = (integer) => {
 
 const validateQuestion = (entry) => {
   const {
-    _id,
+    id,
     product_id,
     question_body,
-    created_at,
     asker_name,
     asker_email,
-    reported,
     question_helpfulness
   } = entry;
 
   const questionTest = [
-    validateId(_id),
+    validateId(id),
     validateId(product_id),
     validateBody(question_body),
     validateName(asker_name),
@@ -74,12 +74,12 @@ const validateQuestion = (entry) => {
 const validateAnswer = (entry) => {
 
   const answerValidations = [
-    validateId(entry._id),
+    validateId(entry.answer_id),
     validateId(entry.question_id),
     validateBody(entry.body),
     validateName(entry.answerer_name),
     validateEmail(entry.answerer_email),
-    validateNumber(entry.answer_helpfulness)
+    validateNumber(entry.helpfulness)
   ]
   const allTestPass = answerValidations.every((test) => {
     if (test) {
@@ -93,7 +93,7 @@ const validateAnswer = (entry) => {
 
 const validatePhoto = (entry) => {
   const photoValidations = [
-    validateId(entry._id),
+    validateId(entry.id),
     validateId(entry.answer_id),
     validateBody(entry.url)
   ]
