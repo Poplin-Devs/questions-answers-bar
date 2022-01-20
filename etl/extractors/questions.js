@@ -2,7 +2,6 @@
 const LineByLineReader = require('line-by-line');
 const writeBuffer = require('../load')
 const { validateQuestion } = require('../validate');
-const start = performance.now();
 
 let buffer = [];
 let count = 0;
@@ -48,7 +47,7 @@ lr.on('line', (line) => {
       .then((result) => {
         console.log(`Read and qued question entries: ${count}`);
         buffer = [];
-        setTimeout(() => {
+        setTimeout(()=> {
           lr.resume();
         }, 10000)
       })
@@ -61,7 +60,6 @@ lr.on('line', (line) => {
 })
 
 lr.on('end', () => {
-  const end = performance.now()
   console.log(`Loading final ${buffer.length} entires..`)
   writeBuffer(buffer, 'sdc', 'questions')
     .then(() => {

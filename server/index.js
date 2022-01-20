@@ -13,14 +13,16 @@ app.get('/qa/questions', (req, res) => {
 
   const { product_id, count, page } = req.query;
 
-  getQuestions(product_id).then((results)=> {
-    console.log('This is our response from our database ', results)
+  getQuestions(product_id)
+  .then((questions)=> {
+    console.log('This is our response from our database ', questions)
     const questionData = {
       product_id,
-      results
+      results: questions
     }
     res.send(questionData);
   })
+  .catch(err => console.error(err))
 
   //Should have product_id
   //may have page num default 1
