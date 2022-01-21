@@ -1,45 +1,56 @@
 
 const express = require('express');
-const { getQuestions } = require('./controllers/questions')
-const cors = require('cors');
+const { readQuestions, readAnswers } = require('./controllers/questions')
 const bodyParser = require('body-parser');
-
+const cors = require('cors')
 app = express();
-app.use(cors());
 app.use(bodyParser.json());
+app.use(cors());
+//Request Authorization
+app.use((req, res, next) => {
+  if (!req.headers['authorization']) {
+    return res.status(403).json({ error: "No credentials sent!" });
+  }
+  next();
+});
 
 //QA get questions
 app.get('/qa/questions', (req, res) => {
-
   const { product_id, count, page } = req.query;
 
-  getQuestions(product_id)
+  if (!product_id) res.status(400).send(err);
+  readQuestions(product_id, page, count)
   .then((questions)=> {
-    console.log('This is our response from our database ', questions)
     const questionData = {
       product_id,
+      page,
+      count,
       results: questions
     }
-    res.send(questionData);
+    res.status(200).json(questionData);
   })
-  .catch(err => console.error(err))
-
-  //Should have product_id
-  //may have page num default 1
-  //may have count num default 5
-
-  //should return an array of results
-  console.log('Get Questions Request recieved with these parameters', req.query)
+  .catch(err => res.status(500).send(err))
 })
 
 
 //QA get answers
 app.get('/qa/questions/:question_id/answers', (req, res) => {
-  //Should have a question_id
-  //may have page numb default 1
-  //may have count numb default 5
-  console.log('these are our answer request params',req.params)
-  res.send(`\n Get answers was responded too`);
+  const { question_id } = req.params;
+  const { page, count } = req.query;
+  if (!question_id) res.status(400).send(err);
+  readAnswers(question_id, page, count)
+  .then((answers) => {
+    const answerData = {
+      question: question_id,
+      page,
+      count,
+      results: answers
+    }
+
+    console.log(answerData)
+    res.status(200).json(answerData)
+  })
+  .catch(err => res.status(500).send(err))
 })
 
 
@@ -66,10 +77,6 @@ app.put('/qa/answers/:answer_id/helpful', (req, res) => {
   //should have an answer_id
 })
 
-//Report an answer
-app.put('/qa/answers/:answer_id/report', (req, res) => {
-  //should have an answer_id
-})
 
 app.listen(port=8080, () => {
   console.log(`Example app listening at http://localhost:${port}`)
