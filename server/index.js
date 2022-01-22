@@ -4,8 +4,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 const {
   readQuestions,
+  writeQuestion,
   readAnswers,
   updateHelpfulQuestion,
+  writeAnswer,
   updateHelpfulAnswer
 } = require('./controllers/questions')
 
@@ -57,8 +59,18 @@ app.get('/qa/questions/:question_id/answers', (req, res) => {
 
 //Add a question
 app.post('/qa/questions', (req, res) => {
-  console.log('Post question recieved with these queries', req.params)
-  console.log('and body ', req.body)
+  const { name, body, email } = req.body;
+  const { product_id } = req.query;
+  req.body.product_id = product_id;
+  if (!product_id) res.status(400).send();
+  if (!name || !body || !email ) res.status(409).send()
+  writeQuestion(req.body)
+  .then((response) => {
+    console.log('DB RESP', response)
+    res.status(201).send();
+  })
+  .catch(err => console.error(err));
+  console.log('and body ', name, body, email)
 })
 
 //Add an answers
