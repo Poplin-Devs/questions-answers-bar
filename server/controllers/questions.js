@@ -8,7 +8,7 @@ async function readQuestions( product_id ,page = 1, count = 5) {
   const collection = db.collection('questions');
   const totalQuestions = page * count;
   const foundQuestions = await collection
-  .find({ product_id: Number(product_id) }, {answers: 0})
+  .find({ product_id: product_id}, {answers: 0})
   .limit(totalQuestions)
   .toArray()
 
@@ -55,13 +55,23 @@ async function writeQuestion(question) {
   console.log('addQuestion was called')
 }
 
+async function updateHelpfulQuestion(question_id) {
+  await client.connect();
+  const collection = db.collection('questions');
+  const updatedQuestions = await collection.updateOne({"id": question_id},
+    {"$inc": {"question_helpfulness": 1}}
+  )
+  return updatedQuestions;
+}
+
+
 async function readAnswers(question_id, page=1, count=5) {
   //db.questions.find({id: 18}, {nswers: 1})
   await client.connect();
   const collection = db.collection('questions');
   const totalAnswers = page * count;
   const foundQuestion = await collection
-  .find({id: Number(question_id)}, {answers: 1})
+  .find({id: question_id}, {answers: 1})
   .limit(totalAnswers)
   .toArray();
 
@@ -77,12 +87,28 @@ async function readAnswers(question_id, page=1, count=5) {
   return formattedAnswers;
 }
 
+async function writeAnswer(answer) {
+
+}
+
+async function updateHelpfulAnswer(answer_id) {
+  await client.connect();
+  const collection = db.collection('questions');
+  const updatedAnswer = await collection.updateOne({"answers.answer_id": answer_id},
+    {"$inc": { "answers.$.helpfulness": 1}}
+  )
+  return updatedAnswer;
+}
+
 
 
 module.exports = {
   readQuestions,
   writeQuestion,
-  readAnswers
+  updateHelpfulQuestion,
+  readAnswers,
+  writeAnswer,
+  updateHelpfulAnswer
 };
 
 

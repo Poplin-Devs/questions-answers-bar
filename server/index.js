@@ -1,8 +1,14 @@
 
 const express = require('express');
-const { readQuestions, readAnswers } = require('./controllers/questions')
 const bodyParser = require('body-parser');
 const cors = require('cors')
+const {
+  readQuestions,
+  readAnswers,
+  updateHelpfulQuestion,
+  updateHelpfulAnswer
+} = require('./controllers/questions')
+
 app = express();
 app.use(bodyParser.json());
 app.use(cors());
@@ -17,9 +23,8 @@ app.use((req, res, next) => {
 //QA get questions
 app.get('/qa/questions', (req, res) => {
   const { product_id, count, page } = req.query;
-
   if (!product_id) res.status(400).send(err);
-  readQuestions(product_id, page, count)
+  readQuestions(Number(product_id), page, count)
   .then((questions)=> {
     const questionData = {
       product_id,
@@ -32,13 +37,12 @@ app.get('/qa/questions', (req, res) => {
   .catch(err => res.status(500).send(err))
 })
 
-
 //QA get answers
 app.get('/qa/questions/:question_id/answers', (req, res) => {
   const { question_id } = req.params;
   const { page, count } = req.query;
   if (!question_id) res.status(400).send(err);
-  readAnswers(question_id, page, count)
+  readAnswers(Number(question_id), page, count)
   .then((answers) => {
     const answerData = {
       question: question_id,
@@ -46,13 +50,10 @@ app.get('/qa/questions/:question_id/answers', (req, res) => {
       count,
       results: answers
     }
-
-    console.log(answerData)
     res.status(200).json(answerData)
   })
   .catch(err => res.status(500).send(err))
 })
-
 
 //Add a question
 app.post('/qa/questions', (req, res) => {
@@ -68,13 +69,25 @@ app.post('/qa/questions/:question_id/answers', (req, res) => {
 
 //Question was helpful
 app.put('/qa/questions/:question_id/helpful', (req, res) => {
-  //should have questions id
-})
+  const { question_id } = req.params;
+  if (!question_id) res.status(400).send();
+  updateHelpfulQuestion(Number(question_id))
+  .then((response) => {
+    res.status(201).send()
+  })
+  .catch((err) => console.error(err));
+});
 
 
 //Answer was helpful
 app.put('/qa/answers/:answer_id/helpful', (req, res) => {
-  //should have an answer_id
+  const { answer_id } = req.params;
+  if (!answer_id) res.status(400).send();
+  updateHelpfulAnswer(Number(answer_id))
+  .then((response) => {
+    res.status(201).send()
+  })
+  .catch((err) => console.error(err));
 })
 
 

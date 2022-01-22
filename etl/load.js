@@ -8,9 +8,7 @@ async function writeBuffer(buffer, targetDB, targetCollection) {
 
   collection.insertMany(buffer)
   .then((response) => {
-    setTimeout((response)=> {
-      console.log(`entries succesfully loaded..`)
-    }, 10000)
+    console.log(`entries succesfully loaded..`)
   })
   .catch(err => console.error(err))
 }

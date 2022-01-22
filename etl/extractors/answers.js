@@ -9,8 +9,10 @@ let errors = 0;
 let lr = new LineByLineReader('../../data/answers.csv');
 
 lr.on('line', (line) => {
+
   lr.pause();
   const splitLine = line.split(',');
+
   const [
     answerId,
     questionId,
@@ -21,6 +23,7 @@ lr.on('line', (line) => {
     reported,
     answerHelpful
   ] = splitLine;
+
   const newEntry = {
     answer_id: Number(answerId),
     question_id: Number(questionId),
