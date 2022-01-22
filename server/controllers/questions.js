@@ -2,6 +2,17 @@ const { MongoClient } = require('mongodb');
 const client = new MongoClient('mongodb://localhost:27017');
 const db = client.db('sdc');
 
+async function nextQuestionId() {
+  await client.connect();
+  const collection = db.collection('questions');
+  const lastId = await collection
+  .find({}, {'answers': 0})
+  .sort({'id': -1})
+  .limit(1)
+  .toArray()
+  const newId = lastId[0]['id'] + 1
+  return newId;
+}
 
 async function readQuestions( product_id ,page = 1, count = 5) {
   await client.connect();
@@ -50,9 +61,26 @@ async function readQuestions( product_id ,page = 1, count = 5) {
 };
 
 async function writeQuestion(question) {
+
   await client.connect();
-  const collection = db.questions('questions');
-  console.log('addQuestion was called')
+  const collection = db.collection('questions');
+  const nextId = await nextQuestionId();
+  const date = new Date().toISOString();
+  const { name, body, email, product_id } = question;
+  const newQuestion = {
+    id: nextId,
+    product_id: Number(product_id),
+    question_body: body,
+    question_date: date,
+    asker_name: name,
+    asker_email: email,
+    reported: false,
+    question_helpfulness: 0,
+    answers: []
+  }
+  const insertedQuestion = await collection.insertOne(newQuestion);
+
+  return insertedQuestion;
 }
 
 async function updateHelpfulQuestion(question_id) {
