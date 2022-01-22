@@ -7,8 +7,10 @@ const {
   writeQuestion,
   readAnswers,
   updateHelpfulQuestion,
+  reportQuestion,
   writeAnswer,
-  updateHelpfulAnswer
+  updateHelpfulAnswer,
+  reportAnswer
 } = require('./controllers/questions')
 
 app = express();
@@ -64,6 +66,17 @@ app.put('/qa/questions/:question_id/helpful', (req, res) => {
   .catch(err => res.status(500).send(err))
 });
 
+//report question -> db
+app.put('/qa/questions/:question_id/report', (req, res) => {
+  const { question_id } = req.params;
+  if (!question_id) res.status(400).send();
+  reportQuestion(Number(question_id))
+  .then((response) => {
+    res.status(201).send()
+  })
+  .catch(err => res.status(500).send(err))
+});
+
 // client < - answers
 app.get('/qa/questions/:question_id/answers', (req, res) => {
   const { question_id } = req.params;
@@ -89,18 +102,30 @@ app.post('/qa/questions/:question_id/answers', (req, res) => {
   req.body.question_id = Number(question_id);
   if (!question_id) res.status(400).send();
   if (!name || !body || !email ) res.status(409).send()
+  console.log('Post answer recieved', question_id)
   writeAnswer(req.body)
   .then((response) => {
-    console.log('Response from our db', response);
     res.status(201).send();
   })
+  .catch(err => res.status(500).send(err))
 })
 
-//Answer was helpful
+//helpful answer - > db
 app.put('/qa/answers/:answer_id/helpful', (req, res) => {
   const { answer_id } = req.params;
   if (!answer_id) res.status(400).send();
   updateHelpfulAnswer(Number(answer_id))
+  .then((response) => {
+    res.status(201).send()
+  })
+  .catch(err => res.status(500).send(err))
+})
+
+//report answer - > db
+app.put('/qa/answers/:answer_id/report', (req, res) => {
+  const { answer_id } = req.params;
+  if (!answer_id) res.status(400).send();
+  reportAnswer(Number(answer_id))
   .then((response) => {
     res.status(201).send()
   })

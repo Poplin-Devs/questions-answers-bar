@@ -8,7 +8,6 @@ async function nextQuestionId() {
   const lastId = await collection
   .find({}, {'answers': 0})
   .sort({'id': -1})
-  .limit(1)
   .toArray();
   const newId = lastId[0]['id'] + 1;
   return newId;
@@ -16,13 +15,15 @@ async function nextQuestionId() {
 
 async function nextAnswerId() {
   await client.connect();
-  const lastId = await collection
-  .find({}, {})
+  const lastIdFind = await collection
+  .find()
   .sort({'answers.answer_id': -1})
   .limit(1)
   .toArray();
-  const newId = lastId[0]['id'] + 1;
-  return newId;
+  const answers = lastIdFind[0].answers;
+  const lastId = answers[answers.length - 1]['answer_id'];
+  const nextId = lastId + 1;
+  return nextId;
 }
 
 async function readQuestions( product_id ,page = 1, count = 5) {
@@ -92,12 +93,20 @@ async function writeQuestion(question) {
 
 async function updateHelpfulQuestion(question_id) {
   await client.connect();
-  const updatedQuestions = await collection.updateOne({"id": question_id},
+  const updatedQuestions = await collection
+  .updateOne({"id": question_id},
     {"$inc": {"question_helpfulness": 1}}
   )
   return updatedQuestions;
 }
 
+async function reportQuestion(question_id) {
+  await client.connect();
+  const updatedQuestions = await collection
+  .updateOne({"id": question_id},
+    {"$set": {"reported": true}})
+  return updatedQuestions;
+}
 
 async function readAnswers(question_id, page=1, count=5) {
   //db.questions.find({id: 18}, {nswers: 1})
@@ -123,8 +132,22 @@ async function readAnswers(question_id, page=1, count=5) {
 async function writeAnswer(answer) {
   await client.connect();
   const nextId = await nextAnswerId();
-  console.log(answer, 'is our answer')
-  console.log('This is our next id ', nextId)
+  const date = new Date().toISOString();
+  const { name, body, email, photos, question_id } = answer;
+  const newAnswer = {
+    answer_id: nextId,
+    question_id,
+    body,
+    date,
+    answerer_name: name,
+    answerer_email: email,
+    reported: false,
+    helpfulness: 0,
+    photos
+  }
+  const insertAnswer = await collection
+  .updateOne({'id': question_id}, {'$push': {'answers': newAnswer}})
+  return insertAnswer;
 }
 
 async function updateHelpfulAnswer(answer_id) {
@@ -135,15 +158,26 @@ async function updateHelpfulAnswer(answer_id) {
   return updatedAnswer;
 }
 
+async function reportAnswer(answer_id) {
+  await client.connect();
+  const updatedAnswer = await collection.updateOne({"answers.answer_id": answer_id},
+    {"$set": { "answers.$.reported": true}}
+  )
+  return updatedAnswer;
+}
+
+
 
 
 module.exports = {
   readQuestions,
   writeQuestion,
   updateHelpfulQuestion,
+  reportQuestion,
   readAnswers,
   writeAnswer,
-  updateHelpfulAnswer
+  updateHelpfulAnswer,
+  reportAnswer
 };
 
 
