@@ -24,7 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//client < - questions
+//Get questions via product_id
 app.get('/qa/questions', (req, res) => {
   const { product_id, count, page } = req.query;
   if (!product_id) res.status(400).send(err);
@@ -41,7 +41,7 @@ app.get('/qa/questions', (req, res) => {
   .catch(err => res.status(500).send(err))
 })
 
-//question - > db
+//Add a questions via product-id
 app.post('/qa/questions', (req, res) => {
   const { name, body, email } = req.body;
   const { product_id } = req.query;
@@ -55,7 +55,7 @@ app.post('/qa/questions', (req, res) => {
   .catch(err => res.status(500).send(err))
 })
 
-//question update - > db
+//Update a question via question id
 app.put('/qa/questions/:question_id/helpful', (req, res) => {
   const { question_id } = req.params;
   if (!question_id) res.status(400).send();
@@ -66,7 +66,7 @@ app.put('/qa/questions/:question_id/helpful', (req, res) => {
   .catch(err => res.status(500).send(err))
 });
 
-//report question -> db
+//Update a question as reported via questions
 app.put('/qa/questions/:question_id/report', (req, res) => {
   const { question_id } = req.params;
   if (!question_id) res.status(400).send();
@@ -77,7 +77,7 @@ app.put('/qa/questions/:question_id/report', (req, res) => {
   .catch(err => res.status(500).send(err))
 });
 
-// client < - answers
+//Get answers via question id
 app.get('/qa/questions/:question_id/answers', (req, res) => {
   const { question_id } = req.params;
   const { page, count } = req.query;
@@ -95,7 +95,7 @@ app.get('/qa/questions/:question_id/answers', (req, res) => {
   .catch(err => res.status(500).send(err))
 })
 
-//answer - > db
+//Add answer via question id
 app.post('/qa/questions/:question_id/answers', (req, res) => {
   const { name, body, email } = req.body;
   const { question_id } = req.params;
@@ -110,7 +110,7 @@ app.post('/qa/questions/:question_id/answers', (req, res) => {
   .catch(err => res.status(500).send(err))
 })
 
-//helpful answer - > db
+//Update answer as helpful via answer_id
 app.put('/qa/answers/:answer_id/helpful', (req, res) => {
   const { answer_id } = req.params;
   if (!answer_id) res.status(400).send();
@@ -121,7 +121,7 @@ app.put('/qa/answers/:answer_id/helpful', (req, res) => {
   .catch(err => res.status(500).send(err))
 })
 
-//report answer - > db
+//Update an answer and set to reported via answer_id
 app.put('/qa/answers/:answer_id/report', (req, res) => {
   const { answer_id } = req.params;
   if (!answer_id) res.status(400).send();
@@ -134,5 +134,5 @@ app.put('/qa/answers/:answer_id/report', (req, res) => {
 
 
 app.listen(port=8080, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Atelier listening at http://localhost:${port}`)
 })
