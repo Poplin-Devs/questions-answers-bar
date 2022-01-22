@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "line-by-line": "^0.1.6",
+    "mongodb": "^4.3.0",
+    "mongoose": "^6.1.6"
+  },
+  "name": "questions-answers-bar",
+  "description": "Personal project",
+  "version": "1.0.0",
+  "main": "answerChecks.js",
+  "scripts": {
+    "serve": "nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Poplin-Devs/questions-answers-bar.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Poplin-Devs/questions-answers-bar/issues"
+  },
+  "homepage": "https://github.com/Poplin-Devs/questions-answers-bar#readme"
+}
