@@ -1,33 +1,43 @@
 const { MongoClient } = require('mongodb');
 const client = new MongoClient('mongodb://localhost:27017');
 const db = client.db('sdc');
+const collection = db.collection('questions');
 
 async function nextQuestionId() {
   await client.connect();
-  const collection = db.collection('questions');
   const lastId = await collection
   .find({}, {'answers': 0})
   .sort({'id': -1})
   .limit(1)
-  .toArray()
-  const newId = lastId[0]['id'] + 1
+  .toArray();
+  const newId = lastId[0]['id'] + 1;
+  return newId;
+}
+
+async function nextAnswerId() {
+  await client.connect();
+  const lastId = await collection
+  .find({}, {})
+  .sort({'answers.answer_id': -1})
+  .limit(1)
+  .toArray();
+  const newId = lastId[0]['id'] + 1;
   return newId;
 }
 
 async function readQuestions( product_id ,page = 1, count = 5) {
   await client.connect();
-  const collection = db.collection('questions');
   const totalQuestions = page * count;
   const foundQuestions = await collection
   .find({ product_id: product_id}, {answers: 0})
   .limit(totalQuestions)
-  .toArray()
+  .toArray();
 
   //Format our questions
   const formatedQuestions = foundQuestions.map((question) => {
 
     const { id, question_body, question_date, asker_name,
-      question_helpfulness, answers, reported } = question
+      question_helpfulness, answers, reported } = question;
 
     //format that question's answers
     const formattedAnswers = answers.map((answer) => {
@@ -43,7 +53,7 @@ async function readQuestions( product_id ,page = 1, count = 5) {
           answerer_name,
           helpfulness
         }
-      }
+      };
     })
 
     if (!reported) {
@@ -54,16 +64,14 @@ async function readQuestions( product_id ,page = 1, count = 5) {
         asker_name,
         question_helpfulness,
         answers: formattedAnswers
-      }
-    }
-  })
+      };
+    };
+  });
   return formatedQuestions;
 };
 
 async function writeQuestion(question) {
-
   await client.connect();
-  const collection = db.collection('questions');
   const nextId = await nextQuestionId();
   const date = new Date().toISOString();
   const { name, body, email, product_id } = question;
@@ -79,13 +87,11 @@ async function writeQuestion(question) {
     answers: []
   }
   const insertedQuestion = await collection.insertOne(newQuestion);
-
   return insertedQuestion;
 }
 
 async function updateHelpfulQuestion(question_id) {
   await client.connect();
-  const collection = db.collection('questions');
   const updatedQuestions = await collection.updateOne({"id": question_id},
     {"$inc": {"question_helpfulness": 1}}
   )
@@ -96,7 +102,6 @@ async function updateHelpfulQuestion(question_id) {
 async function readAnswers(question_id, page=1, count=5) {
   //db.questions.find({id: 18}, {nswers: 1})
   await client.connect();
-  const collection = db.collection('questions');
   const totalAnswers = page * count;
   const foundQuestion = await collection
   .find({id: question_id}, {answers: 1})
@@ -116,12 +121,14 @@ async function readAnswers(question_id, page=1, count=5) {
 }
 
 async function writeAnswer(answer) {
-
+  await client.connect();
+  const nextId = await nextAnswerId();
+  console.log(answer, 'is our answer')
+  console.log('This is our next id ', nextId)
 }
 
 async function updateHelpfulAnswer(answer_id) {
   await client.connect();
-  const collection = db.collection('questions');
   const updatedAnswer = await collection.updateOne({"answers.answer_id": answer_id},
     {"$inc": { "answers.$.helpfulness": 1}}
   )
